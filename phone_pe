@@ -1,0 +1,32 @@
+PhonePe Data Engineering interview will be 17X easier with these questions
+CTC = 30 LPA
+EXP = 4+
+
+If you're targeting a company like PhonePe,  These questions will help you:
+
+🔹 Data Engineering 
+1️⃣ How would you design a data pipeline to process millions of payment transactions per hour while ensuring reliability and data accuracy?
+2️⃣ Suppose a transaction dataset arrives late or out of order. How would you design the pipeline to handle such scenarios?
+
+🔹 SQL & Data Modeling
+3️⃣ You have a table containing billions of payment transactions. How would you design partitioning and indexing to optimize analytical queries?
+4️⃣ Write a query to find users who made transactions on three consecutive days.
+5️⃣ How would you identify duplicate payment transactions in a dataset?
+
+🔹 PySpark / Big Data
+6️⃣ A Spark job processing transaction logs suddenly becomes 3× slower after new data is added. How would you investigate and fix it?
+7️⃣ Explain how data skew happens in joins and what strategies you would use to handle it.
+8️⃣ When would you choose broadcast joins vs shuffle joins in Spark?
+
+🔹 Data Pipeline & Reliability
+9️⃣ How would you implement data quality checks in a financial transactions pipeline?
+🔟How would you design a pipeline to reprocess historical transactions if a bug is found in transformations?
+
+After mentoring many engineers preparing for these interviews, I compiled a Data Engineering Success Kit covering practical interview-style questions and scenarios.
+If you're preparing for roles in companies like Tiger Analytics, this might help you structure your preparation better.
+You can explore it here:
+👉 https://lnkd.in/g9evVqb3
+
+🔥 Save this post before your next interview
+👍 Like | 💾 Save | 🔁 Share with someone preparing for interviews
+Follow Shilpa Das For more such content.
