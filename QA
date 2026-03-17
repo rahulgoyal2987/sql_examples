@@ -1,0 +1,39 @@
+We reduced a 1.8TB Delta MERGE from 52 minutes to 18 minutes — without increasing cluster size.
+
+SCD Type 2.
+Daily updates.
+Production workload.
+
+The bottleneck wasn’t compute.
+
+It was data layout + execution strategy.
+
+Here’s what was happening:
+
+• Full-table scans during MERGE
+• Excessive file rewrites
+• Poor clustering on match keys
+• No effective data skipping
+
+So we changed the storage strategy — not the cluster.
+
+1️⃣ Re-clustered data on frequently matched keys
+2️⃣ Compacted files before MERGE (OPTIMIZE to control file count)
+3️⃣ Aligned join conditions with partition/clustering design
+4️⃣ Leveraged AQE to handle skewed updates dynamically
+
+Impact:
+• 65% faster MERGE runtime
+• 30% lower compute cost
+• More consistent job performance during peak ingestion
+
+At TB scale, MERGE performance isn’t about cleaner code.
+
+It’s about how your file layout interacts with Spark’s execution plan.
+
+If your MERGE jobs are slow, start by checking:
+File count.
+Clustering.
+Shuffle size.
+
+What’s the largest Delta MERGE you’ve optimized in production?
