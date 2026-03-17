@@ -1,0 +1,51 @@
+𝐃𝐚𝐭𝐚𝐛𝐫𝐢𝐜𝐤𝐬 𝐈𝐧𝐭𝐞𝐫𝐯𝐢𝐞𝐰 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬 – 𝟐𝟎𝟐6
+
+1. What is Databricks and how is it different from Apache Spark?
+2. Explain the architecture of Databricks.
+3. What are Databricks Workspaces?
+4. Difference between Databricks Runtime and Apache Spark open-source runtime.
+5. What is DBFS (Databricks File System) and its use cases?
+6. How do you optimize cluster performance in Databricks?
+7. Difference between Databricks Jobs and Notebooks.
+8. What is the role of the Databricks Driver and Workers?
+9. Explain Autoscaling in Databricks.
+10. Difference between Standard, High Concurrency, and Single Node clusters.
+11. What is the Unity Catalog in Databricks?
+12. How do you implement data governance and security in Databricks?
+13. What are Delta Tables and their advantages over Parquet?
+14. Explain Delta Lake features like ZORDER, OPTIMIZE, and VACUUM.
+15. How does Databricks handle schema evolution in Delta Lake?
+16. What is Time Travel in Delta Lake?
+17. Explain Databricks SQL and its use cases.
+18. Difference between Databricks SQL and Spark SQL.
+19. What are MLflow and its components in Databricks?
+20. How do you integrate Databricks with Azure / AWS / GCP services?
+21. Explain the Lakehouse architecture.
+22. What are Bronze, Silver, and Gold layers in Databricks?
+23. How do you monitor and debug jobs in Databricks?
+24. What are Databricks Repos and how are they used in CI/CD?
+25. Difference between Databricks Delta Live Tables and normal Delta Tables.
+26. What is Photon Engine in Databricks?
+27. How do you handle cost optimization in Databricks?
+28. What are Widgets in Databricks Notebooks?
+29. How do you implement Streaming pipelines in Databricks?
+30. Explain best practices for Partitioning and Bucketing in Databricks Delta.
+31. What are Databricks Secrets and how do you manage credentials?
+32. How does Databricks manage job scheduling and retries?
+33. Difference between Managed and External tables in Databricks.
+34. Explain the use of Caching and Materialized Views in Databricks.
+35. How do you handle GDPR/PII compliance in Databricks?
+36. What is the difference between Autoloader and Structured Streaming?
+37. Explain Databricks Workflows.
+38. How do you enable Data Skipping in Delta Lake?
+39. What are some real-time use cases of Databricks in data engineering?
+40. How do you optimize joins and shuffles in Databricks Spark jobs?
+41. Explain the role of Catalyst Optimizer and Tungsten in Databricks.
+42. What is the difference between Databricks Community Edition and Enterprise Edition?
+43. How do you share and collaborate using Databricks notebooks?
+44. Explain the lifecycle of a Databricks cluster.
+45. How do you manage versioning in Delta Lake?
+46. What is a medallion architecture in Databricks pipelines?
+47. How do you debug OutOfMemory errors in Databricks Spark jobs?
+48. Explain Databricks SQL Warehouses.
+49. What is a Job Cluster vs Interactive Cluster in Databricks?
