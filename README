@@ -3,6 +3,7 @@ Advanced SQL:
 https://github.com/leetlab11/Advanced-SQL-50
 https://medium.com/@techsuneel99/20-advanced-sql-techniques-with-practical-examples-b47490d9896d
 https://github.com/doocs/leetcode/blob/main/solution/0500-0599/0512.Game%20Play%20Analysis%20II/README_EN.md
+https://medium.com/@techsuneel99/20-advanced-sql-techniques-with-practical-examples-b47490d9896d
 
 late Arrival:
 https://lakefs.io/blog/best-practices-late-arriving-data/
@@ -11,3 +12,6 @@ Data Quality Principals
 https://www.ibm.com/products/tutorials/6-pillars-of-data-quality-and-how-to-improve-your-data
 Why should i prefer snowflake schema over star schema?
 what are distribution supported in azure synapse?
+
+Data Engineering
+https://sixthsense.rakuten.com/blog/Top-Data-Engineering-Concepts-and-Architectures-You-Need-to-Know
