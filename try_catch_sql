@@ -1,0 +1,31 @@
+BEGIN
+  -- 1. Declare an exit handler for any SQL exception
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    -- Declare variables to store error details
+    DECLARE error_condition STRING;
+    DECLARE sqlstate STRING;
+    DECLARE msg_args MAP<STRING, STRING>;
+    DECLARE msg STRING;
+
+    -- 2. Retrieve the diagnostics of the error condition
+    GET DIAGNOSTICS CONDITION 1
+      error_condition = CONDITION_IDENTIFIER,
+      sqlstate = RETURNED_SQLSTATE,
+      msg_args = MESSAGE_ARGUMENTS,
+      msg = MESSAGE_TEXT;
+
+    -- 3. Handle the error (e.g., log it or display a custom message)
+    -- In this case, we use a VALUES statement to demonstrate retrieval
+    -- You could also INSERT into a log table here.
+    VALUES(
+      'Error Condition : ' || error_condition,
+      'Message arguments : ' || cast(msg_args AS STRING),
+      'SQLSTATE : ' || sqlstate,
+      msg
+    );
+  END;
+
+  -- 4. Code that might cause an error is placed here (the equivalent of a TRY block)
+  SELECT * FROM does_not_exist;
+END;
