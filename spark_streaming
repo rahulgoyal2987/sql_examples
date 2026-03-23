@@ -1,0 +1,8 @@
+from pyspark.sql import functions as F
+spark.readStream.format("delta").table("workspace.bookstore_eng_pro.dd_source").
+groupBy(F.window("event_time", "60 seconds")).
+count().
+writeStream.format("delta").
+outputMode("complete").
+option("checkpointLocation","/Volumes/workspace/default/test1").
+trigger(availableNow=True).toTable("dd_source1")
