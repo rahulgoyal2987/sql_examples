@@ -6,3 +6,9 @@ writeStream.format("delta").
 outputMode("complete").
 option("checkpointLocation","/Volumes/workspace/default/test1").
 trigger(availableNow=True).toTable("dd_source1")
+
+create streaming table dd_source_s as select * from stream(dd_source);
+select window, count(*) from dd_source_s
+group by window(event_time, '60 seconds')
+
+
