@@ -11,4 +11,15 @@ create streaming table dd_source_s as select * from stream(dd_source);
 select window, count(*) from dd_source_s
 group by window(event_time, '60 seconds')
 
+SELECT window, min(val), max(val), count(val)
+  FROM VALUES (TIMESTAMP'2020-08-01 12:20:21', 17),
+              (TIMESTAMP'2020-08-01 12:20:22', 12),
+              (TIMESTAMP'2020-08-01 12:23:10',  8),
+              (TIMESTAMP'2020-08-01 12:25:05', 11),
+              (TIMESTAMP'2020-08-01 12:28:59', 15),
+              (TIMESTAMP'2020-08-01 12:30:01', 23),
+              (TIMESTAMP'2020-08-01 12:30:15',  2),
+              (TIMESTAMP'2020-08-01 12:35:22', 16) AS S(stamp, val)
+  GROUP BY window(stamp, '2 MINUTES 30 SECONDS', '30 SECONDS', '15 SECONDS');
+
 
