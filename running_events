@@ -1,0 +1,33 @@
+with previous_running_ends as (
+select user_id, event_ts, lag(event_ts) over (partition by user_id order by event_ts) prev_running_ends,
+row_number() over (partition by user_id order by event_ts) row_num from 
+values ('A', cast('2026-03-25 10:00' as timestamp)),
+('A',cast('2026-03-25 10:10' as timestamp)),
+('A', cast('2026-03-25 10:45' as timestamp)),
+('A', cast('2026-03-25 11:00' as timestamp)),
+('A', cast('2026-03-25 12:00' as timestamp)),
+('B', cast('2026-03-25 09:00' as timestamp)),
+('B', cast('2026-03-25 09:20' as timestamp)),
+('B', cast('2026-03-25 10:00' as timestamp))
+events(user_id, event_ts)),
+
+all_running_ends as (
+select user_id, event_ts, prev_running_ends, row_num, case when prev_running_ends is null then 1 when timestampdiff(MINUTE, prev_running_ends,event_ts
+) > 30 then 1 else 0 end is_running_end from previous_running_ends
+),
+all_events as (
+select
+ is_running_end,
+row_num,
+user_id,
+ sum(is_running_end) over (partition by user_id order by event_ts ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)  session_id,
+event_ts as session_start,
+first_value(case when is_running_end = 1 then prev_running_ends end, true) over (partition by user_id order by event_ts ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING) as session_end_with_nulls,
+first_value(case when is_running_end = 1 then row_num end, true) over (partition by user_id order by event_ts ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+as next_row_num
+ from all_running_ends
+)
+select user_id, session_id, session_start,
+case when session_end_with_nulls is NULL then session_start else session_end_with_nulls end session_end,  
+case when next_row_num is null then 
+1 else (next_row_num - row_num) end as event_counts from all_events where is_running_end = 1
