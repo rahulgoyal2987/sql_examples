@@ -1,0 +1,38 @@
+SALTING EXAMPLE
+salting is used to fix skewed join. For example if one customer id have more than 100 GB data in order table
+df=spark.range(4).alias("salt_key")
+customer = spark.table("customer").crossJoin(df)
+orders = spark.table("orders").withColumn("salt_key", (F.rand() * 4).cast("int").alias("salt_key"))
+out = customer.join(orders, (orders.customer_id = customers.customer_id) & (customer.salt_key = order.salt_key), "inner")
+
+AQE can internally optimize skewed join. Following properties need to be enabled for skewed join issue in spark
+Below property is set by default false by spark to avoid shuffling
+spark.sql.adaptive.forceOptimizeSkewedJoin = true  (adaptive rule to optimize skewed joins to avoid straggler tasks, even if it introduces extra shuffle.)
+Below parameter need to adjusted to avoid creating very small partition of shuffled data.
+spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes = 256MB (A partition is considered as skewed if its size in bytes is larger than this threshold)
+spark.sql.adaptive.skewJoin.skewedPartitionFactor = 5 (A partition is considered as skewed if its size is larger than this factor multiplying the median partition size)
+
+By default spark does broadcast join if table size is 10MB. In Real life scenario. Most of tables are larger 10MB
+below properties need to be changed to improve broadcast join performance
+spark.sql.autoBroadcastJoinThreshold = 1 GB
+Larger table broadcast takes time. so timeout need to increased for larger table
+spark.sql.broadcastTimeout = 15000
+Below property need to be changed for large data shuffling
+It configures the number of partitions to use when shuffling data for joins or aggregations.
+spark.sql.shuffle.partitions = 500
+
+Cache is another optimization technique, Cache must of done if dataframe is reused multiple time
+Cache utilization ratio in spark ui is used to validate the cache is utilized or not.
+Below is right use of cache
+df = spark.table("employee")
+df.filter("employee_id = 1")
+df.filter("employee_id = 2")
+Below are issue faced if cache is done at wrong place.
+1. disk spilling
+2. Cache takes cpu time of serialzation and deserialzation
+Below are steps need to be followed to ensure cache is right or not
+1. check that dataframe or table is used mutliple time
+2. ensure that there is some extra memory exist for cache
+3. check for spark that cache utilization ratio is better
+
+Read more on link https://spark.apache.org/docs/latest/sql-performance-tuning.html
