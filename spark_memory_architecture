@@ -1,0 +1,38 @@
+Spark executors run inside JVMs. Executor heap is split into reserved, user, and unified memory. Unified memory is dynamically shared between execution memory (shuffles, joins, sorts) and storage memory (cache, broadcast). Execution has priority and can evict storage. Off‑heap memory and memory overhead are critical, especially for PySpark
+
+reserved memory - 300 MB
+
+user memory- 1 - (heap - 300 MB) * (1 - spark.memory.fraction) default 40% used for UDF, Scala / Python objects, Spark metadata, Deserialized rows
+Unified Memory (Execution Memory + storage memory)
+= (spark.executor.memory − 300MB) × spark.memory.fraction
+(default 0.6)
+
+execution memory
+Shuffles,Joins (hash tables),Sorts,Aggregations,Window functions
+Characteristics:
+Borrowed first
+If insufficient → spill to disk
+Storage memory can be evicted to make room
+
+Storage Memory
+1.cache() / persist()
+2.Broadcast variables
+
+Characteristics:
+Best‑effort
+Can be evicted if execution needs memory
+Controlled by spark.memory.storageFraction (default 0.5 of unified)
+
+Why it’s called Unified memory
+Execution ↔ Storage share memory dynamically from spark 1.6
+This prevents wasted memory and reduces spills.
+ Memory Overhead (java native memory)
+spark.executor.memoryOverhead
+(default = max(384MB, 10% of executor memory))
+Used for:
+JVM internals,Python workers (PySpark),Native libraries,Unsafe / Tungsten buffers
+JVM native memory (thread stacks, metaspace, GC), Netty network buffers, Shuffle & block transfer buffers,Python worker processes (PySpark)
+JNI / native libraries,OS‑level buffers 
+
+spark.memory.offHeap.enabled uses:
+Large shuffle buffers,Sorting & aggregation,Serialized cached data, Tungsten / Unsafe memory
