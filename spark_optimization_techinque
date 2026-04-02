@@ -1,43 +1,58 @@
-SALTING EXAMPLE
-
-salting is used to fix skewed join. For example if one customer id have more than 100 GB data in order table
-df=spark.range(4).alias("salt_key")
+What is Data Skew?
+Data is considered skewed when it is not evenly distributed across partitions. Skewed data can lead to performance issues such as straggler tasks, long-running stages, and inefficient resource utilization.
+What is Salting?
+Salting is a technique used to mitigate skewed joins in Spark.
+In this approach, an additional column called a salt key is introduced to distribute skewed data across multiple partitions, thereby balancing the join workload.
+Skewed Data Use Case
+Assume the orders table is heavily skewed because customer_id = 5 alone contains more than 100 GB of data. A normal join on customer_id would result in severe skew and performance degradation.
+Salting Example for customer and orders Tables
+from pyspark.sql import functions as F
+df = spark.range(4).alias("salt_key")
 customer = spark.table("customer").crossJoin(df)
-orders = spark.table("orders").withColumn("salt_key", (F.rand() * 4).cast("int").alias("salt_key"))
-out = customer.join(orders, (orders.customer_id = customers.customer_id) & (customer.salt_key = order.salt_key), "inner")
-
-AQE can internally optimize skewed join. Following properties need to be enabled for skewed join issue in spark
-Below property is set by default false by spark to avoid shuffling
-spark.sql.adaptive.forceOptimizeSkewedJoin = true (adaptive rule to optimize skewed joins to avoid straggler tasks, even if it introduces extra shuffle.)
-
-Below parameter need to adjusted to avoid creating very small partition of shuffled data.
-spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes = 256MB (A partition is considered as skewed if its size in bytes is larger than this threshold)
-spark.sql.adaptive.skewJoin.skewedPartitionFactor = 5 (A partition is considered as skewed if its size is larger than this factor multiplying the median partition size)
-
-
-By default spark does broadcast join if table size is 10MB. In Real life scenario. Most of tables are larger 10MB
-below properties need to be changed to improve broadcast join performance
-spark.sql.autoBroadcastJoinThreshold = 1 GB
-Larger table broadcast takes time. so timeout need to increased for larger table
+orders = (
+spark.table("orders")
+.withColumn("salt_key", (F.rand() * 4).cast("int"))
+)
+out = customer.join(
+orders,
+(orders.customer_id == customer.customer_id) &
+(customer.salt_key == orders.salt_key),
+"inner"
+)
+Adaptive Query Execution (AQE) for Skewed Joins
+Spark’s Adaptive Query Execution (AQE) can automatically optimize skewed joins at runtime.
+To enable skewed join optimization, the following configurations should be set to true: 
+spark.sql.adaptive.forceOptimizeSkewedJoin = true
+This adaptive rule optimizes skewed joins to avoid straggler tasks, even if it introduces extra shuffle.
+Skew Detection Thresholds
+spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes = 256MB
+A partition is considered skewed if its size exceeds this threshold.
+spark.sql.adaptive.skewJoin.skewedPartitionFactor = 5
+A partition is considered skewed if its size is more than 5× the median partition size.
+Broadcast Join Optimization
+By default, Spark performs a broadcast join when the table size is ≤ 10 MB.
+In real‑world scenarios, tables are often much larger.
+Increase Broadcast Join Threshold
+spark.sql.autoBroadcastJoinThreshold = 1GB
+Increase Broadcast Timeout for Large Tables
 spark.sql.broadcastTimeout = 15000
-
-Below property need to be changed for large data shuffling
-It configures the number of partitions to use when shuffling data for joins or aggregations.
+⚠️ Broadcasting large tables can be expensive, so increasing the timeout helps prevent failures.
+When dealing with large shuffles (joins or aggregations), adjust below property:
 spark.sql.shuffle.partitions = 500
-
-Cache is another optimization technique, Cache must of done if dataframe is reused multiple time
-Cache utilization ratio in spark ui is used to validate the cache is utilized or not.
-Below is right use of cache because df is used multiple time by spark
+This controls the number of partitions created during shuffle operations.
+Caching as a Performance Optimization
+Caching is useful only when a DataFrame is reused multiple times.
+✅ Correct Use of Cache
 df = spark.table("employee")
 df.filter("employee_id = 1")
 df.filter("employee_id = 2")
-
-Below are issue faced if cache is done at wrong place.
-
-1. disk spilling
-2. Cache takes cpu time of serialization and deserialization
-Below are steps need to be followed to ensure cache is right or not
-1. check that dataframe or table is used mutliple time
-2. ensure that there is some extra memory exist for cache
-3. Verify from spark UI cache utilization ratio is better
-Read more on link https://spark.apache.org/docs/latest/sql-performance-tuning.html
+Since df is reused, caching can improve performance.
+❌ Issues When Cache Is Used Incorrectly
+Disk spilling due to insufficient memory
+Extra CPU overhead from serialization and deserialization
+Best Practices: -
+Ensure the DataFrame or table is used multiple times
+Confirm there is sufficient executor memory available
+Validate cache effectiveness using Cache Utilization Ratio in the Spark UI
+📘Read link:
+https://lnkd.in/gMwYP9rq
